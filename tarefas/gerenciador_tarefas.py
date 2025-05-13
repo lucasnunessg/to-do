@@ -1,5 +1,11 @@
+from dataclasses import dataclass, asdict
 from tarefas.tarefas_main import Tarefa
 
+@dataclass
+class TarefasUpdateAttrs:
+  titulo: str = None
+  descricao: str = None
+  prioridade: str = None
 
 class GerenciadorTarefas:
   def __init__(self):
@@ -19,19 +25,16 @@ class GerenciadorTarefas:
         return tarefa
     return None
   
-  def editar_tarefa(self, id, novo_titulo=None, nova_descricao= None, nova_prioridade= None):
-    tarefa_editada = self.buscar_por_id(id)
-    if tarefa_editada:
-      if novo_titulo is not None:
-        tarefa_editada.titulo = novo_titulo
-        if nova_descricao is not None:
-          tarefa_editada.descricao = nova_descricao
-          if nova_prioridade is not None:
-            tarefa_editada.prioridade = nova_prioridade
-            return True
-          return False        
-
-
+  def editar_tarefa(self, id: int, attrs: TarefasUpdateAttrs):
+    tarefa = self.buscar_por_id(id)
+    if not tarefa:
+         return False
+            
+    for attr, value in asdict(attrs).items():
+            if value is not None:
+                setattr(tarefa, attr, value)
+    return True
+    
   
   def apagar_tarefa(self, id):
     tarefa = self.buscar_por_id(id)
