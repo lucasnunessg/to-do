@@ -11,3 +11,4 @@ class Tarefa:
         self.descricao = descricao
         self.prioridade = prioridade
         self.data = datetime.now()
+        self.status = 'pendente'
