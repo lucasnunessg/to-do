@@ -1,23 +1,29 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
+
+from tarefas.api.type.tarefa_create import TarefaCreate
 from ...gerenciador_tarefas import GerenciadorTarefas
 
 router = APIRouter(prefix="/tarefas", tags=["Tarefas"])
 
 gerenciador = GerenciadorTarefas()
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
-def criar_tarefa(titulo: str, descricao: str, prioridade: str):
-  tarefa = gerenciador.adicionar_tarefa(titulo, descricao, prioridade)
-  return tarefa
+@router.post("/adicionar", status_code=status.HTTP_201_CREATED)
+def criar_tarefa(tarefa_data: TarefaCreate):
+  tarefa = gerenciador.adicionar_tarefa(titulo=tarefa_data.titulo, 
+                                        descricao=tarefa_data.descricao,
+                                        prioridade=tarefa_data.prioridade)
+  return tarefa.__dict__
 
 @router.get("/", status_code=status.HTTP_200_OK)
 def listar_tarefas():
   tarefas = gerenciador.listar_tarefas()
   if not tarefas:
     return JSONResponse(
-      content={"mesasge: Nenhuma tarefa encontrada."}
+    content={"message": "Nenhuma tarefa encontrada."}
     )
+  if isinstance(tarefas, set):
+    return list(tarefas)
   return tarefas
 
 @router.get("/{id}")
