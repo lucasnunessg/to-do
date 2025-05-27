@@ -35,3 +35,14 @@ def buscar_por_id(id: int):
       detail=f"tarefa com id {id} não encontrada."
     )
   return tarefa
+
+@router.put("/{id}")
+def editar_tarefa(id: int):
+  tarefa = gerenciador.buscar_por_id(id)
+  if not tarefa:
+    raise HTTPException(
+      status_code=status.HTTP_404_NOT_FOUND,
+      detail=f"tarefa {id} não encontrada."
+    )
+  gerenciador.editar_tarefa(tarefa)
+  return tarefa
